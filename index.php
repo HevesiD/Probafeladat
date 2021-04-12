@@ -17,12 +17,12 @@
 <?php
 include_once 'db.php';
 global $connection;
-$query = 'SELECT projects.title AS title, statuses.name AS status, owners.name AS owner, owners.email AS email
-		  FROM proba.projects
-		  LEFT JOIN proba.project_status_pivot ON projects.id = project_status_pivot.project_id
-		  LEFT JOIN proba.statuses ON statuses.id = project_status_pivot.status_id
-		  LEFT JOIN proba.project_owner_pivot ON projects.id = project_owner_pivot.project_id
-		  LEFT JOIN proba.owners ON owners.id = project_owner_pivot.owner_id';
+$query = 'SELECT projects.id AS id, projects.title AS title, statuses.name AS status, owners.name AS owner, owners.email AS email
+		  FROM projects
+		  LEFT JOIN project_status_pivot ON projects.id = project_status_pivot.project_id
+		  LEFT JOIN statuses ON statuses.id = project_status_pivot.status_id
+		  LEFT JOIN project_owner_pivot ON projects.id = project_owner_pivot.project_id
+		  LEFT JOIN owners ON owners.id = project_owner_pivot.owner_id';
 $result = $connection->prepare($query);
 $result->execute();
 while ($row = $result->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
@@ -31,6 +31,6 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
     print('<div class="title">'.$row["title"].'</div>');
 	print('<div class="contact">'.$row["owner"].' ('.$row["email"].')</div>');
 	print('</p>');
-	print('<button type="button"><a href="edit_create.php">Szerkesztés</a></button><button>Törlés</button>');
+	print('<button type="button"><a href="edit_create.php">Szerkesztés</a></button><button type="button"><a href="deleteProject.php?id='.$row["id"].'">Törlés</a></button>');
 	print('</form>');
 }

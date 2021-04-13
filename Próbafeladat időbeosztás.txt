@@ -1,0 +1,4 @@
+Óra	Tól	Ig	Tárgy
+02:00	15:30	17:30	Projektek megjelenítése
+01:24	17:31	18:55	Projekt törlése
+02:00	17:25	19:25	Projekt szerkesztés/létrehozás

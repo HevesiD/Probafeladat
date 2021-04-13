@@ -4,14 +4,11 @@
 	<meta charset="utf-8">
 	<link href="main.css" type="text/css" rel="stylesheet">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<script>
-		
-	</script>
 </head>
 <body>
 	<div class="topnav">WeLove Test
 		<a class="active" href="index.php">Projektlista</a>
-		<a href="edit_create.php">Szerkesztés/Létrehozás</a>
+		<a href="edit_create.php?id=">Szerkesztés/Létrehozás</a>
 	</div>
 </body>
 <?php
@@ -28,9 +25,10 @@ $result->execute();
 while ($row = $result->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
 	print('<form class="center">');
 	print('<div class="status">'.$row["status"].'</div>');
-    print('<div class="title">'.$row["title"].'</div>');
+  print('<div class="title">'.$row["title"].'</div>');
 	print('<div class="contact">'.$row["owner"].' ('.$row["email"].')</div>');
 	print('</p>');
-	print('<button type="button"><a href="edit_create.php">Szerkesztés</a></button><button type="button"><a href="deleteProject.php?id='.$row["id"].'">Törlés</a></button>');
+	print('<button class="buttonblue"><a href="edit_create.php?id='.$row["id"].'">Szerkesztés</a></button>
+				 <button class="buttonred"><a href="deleteProject.php?id='.$row["id"].'">Törlés</a></button>');
 	print('</form>');
 }

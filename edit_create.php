@@ -16,7 +16,7 @@ include_once 'db.php';
 global $connection;
 if($_GET["id"] != "") {
 	$queryProject = 'SELECT projects.id AS id, projects.title AS title, projects.description AS description,
-									 project_status_pivot.status_id AS statusid, owners.name AS owner, owners.email AS email
+									 project_status_pivot.status_id AS statusid, owners.id AS owid, owners.name AS owner, owners.email AS email
 		  					 	 FROM projects
 		  					 	 LEFT JOIN project_status_pivot ON projects.id = project_status_pivot.project_id
 		  					 	 LEFT JOIN project_owner_pivot ON projects.id = project_owner_pivot.project_id
@@ -25,11 +25,13 @@ if($_GET["id"] != "") {
 	$resultProject = $connection->prepare($queryProject);
 	$resultProject->execute();
 	while($rowProject = $resultProject->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)){
-		print('<form class="project" method="GET">');
+		print('<form class="project" action="save.php?id='.$rowProject["id"].'" method="GET">');
+		print('<input name="id" type="hidden" value="'.$rowProject["id"].'"></input>');
+		print('<input name="owid" type="hidden" value="'.$rowProject["owid"].'"></input>');
 		print('<div>Cím</div>');
-		print('<div><input name="projecttitle" type="text" value="'.$rowProject["title"].'"></input></div>');
-print('<div>Leírás</div>');
-		print('<div><textarea name="projectdesc">'.$rowProject["description"].'</textarea></div>');
+		print('<div><input id="projecttitle" name="projecttitle" type="text" value="'.$rowProject["title"].'" required></input></div>');
+		print('<div>Leírás</div>');
+		print('<div><textarea name="projectdesc" required>'.$rowProject["description"].'</textarea></div>');
 		print('<div>Státusz</div>');
 		$queryStatus = 'SELECT statuses.id, statuses.name
 										FROM statuses';
@@ -38,43 +40,47 @@ print('<div>Leírás</div>');
 		print('<div><select name="statusid" size = 1>');
 		while ($rowStatus = $resultStatus->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
 			if($rowStatus["id"] == $rowProject["statusid"]){
-				print('<option value='.$rowStatus["id"].'selected="selected">'.$rowStatus["name"].'</option>');
+				print('<option value="'.$rowStatus["id"].'" selected="selected">'.$rowStatus["name"].'</option>');
 			} else {
-				print('<option value='.$rowStatus["id"].'>'.$rowStatus["name"].'</option>');
+				print('<option value="'.$rowStatus["id"].'">'.$rowStatus["name"].'</option>');
 			}
 		}
 		print('</select></div>');
 		print('<div>Kapcsolattartó neve</div>');
-		print('<div><input name="owmer" type="text" value="'.$rowProject["owner"].'"></input></div>');
+		print('<div><input name="owner" type="text" value="'.$rowProject["owner"].'" required></input></div>');
 		print('<div>Kapcsolattartó e-mail címe</div>');
-		print('<div><input name="email" type="text" value="'.$rowProject["email"].'"></input></div>');
+		print('<div><input name="email" type="text" value="'.$rowProject["email"].'" required></input></div>');
+		print('<div><button class="buttonblue" type="submit">Mentés</button></div>');
+		print('</form>');
 	}
 } else {
-		print('<form class="project" method="GET">');
+		print('<form class="project" action="save.php?id=" method="GET">');
+		print('<input name="id" type="hidden" value=""></input>');
+		print('<input name="owid" type="hidden" value=""></input>');
 		print('<div>Cím</div>');
-		print('<div><input name="projecttitle" type="text" value=""></input></div>');
+		print('<div><input id="projecttitle" name="projecttitle" type="text" value="" required></input></div>');
 		print('<div>Leírás</div>');
-		print('<div><textarea name="projectdesc"></textarea></div>');
+		print('<div><textarea name="projectdesc" required></textarea></div>');
 		print('<div>Státusz</div>');
 		$queryStatus = 'SELECT statuses.id, statuses.name
 										FROM statuses';
 		$resultStatus = $connection->prepare($queryStatus);
 		$resultStatus->execute();
 		print('<div><select id="statusid" size = 1>');
+		$i = 0;
 		while ($rowStatus = $resultStatus->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
-			print('<option value='.$rowStatus["id"].'>'.$rowStatus["name"].'</option>');
+			if( $i == 0){
+				print('<option value="'.$rowStatus["id"].'" selected="selected">'.$rowStatus["name"].'</option>');
+			} else {
+				print('<option value="'.$rowStatus["id"].'">'.$rowStatus["name"].'</option>');
+			}
+			$i += 1;
 		}
 		print('</select></div>');
 		print('<div>Kapcsolattartó neve</div>');
-		print('<div><input name="owner" type="text" value=""></input></div>');
+		print('<div><input name="owner" type="text" value="" required></input></div>');
 		print('<div>Kapcsolattartó e-mail címe</div>');
-		print('<div><input name="email" type="text" value=""></input></div>');
+		print('<div><input name="email" type="text" value="" required></input></div>');
+		print('<div><button class="buttonblue" type="submit">Mentés</button></div>');
+		print('</form>');
 }
-print('<button class="buttonblue"><a href="save.php?
-			 projectid='.$_GET['projectid'].'&
-			 projecttitle='.$_GET['projecttitle'].'&
-			 projectdesc='.$_GET['projectdesc'].'&
-			 statusid='.$_GET['statusid'].'&
-			 owner='.$_GET['owner'].'&
-			 email='.$_GET['email'].'">Mentés</a></button>');
-print('</form>');
